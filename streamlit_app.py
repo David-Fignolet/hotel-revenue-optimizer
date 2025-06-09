@@ -111,7 +111,8 @@ def main():
             ),
             min_value=datetime(2023, 1, 1).date(),
             max_value=datetime(2024, 12, 31).date(),
-            format="DD/MM/YYYY"
+            format="DD/MM/YYYY",
+            key="date_range_selector"
         )
         
         st.subheader("Seuils d'alerte")

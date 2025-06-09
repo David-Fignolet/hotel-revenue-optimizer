@@ -24,8 +24,7 @@ setup(
     description="Outil d'optimisation des revenus hôteliers utilisant l'IA pour la prédiction de la demande et la tarification dynamique",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    python_requires='>=3.8, <3.11',  # Compatible avec Python 3.8 à 3.10
-    install_requires=requirements,
+    python_requires='>=3.10, <3.11',  # Compatible avec Python 3.10
     url="https://github.com/votre-username/hotel-revenue-optimizer",
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={
@@ -45,10 +44,9 @@ setup(
         "Topic :: Office/Business :: Financial",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
     ],
-    python_requires=">=3.9",
     entry_points={
         "console_scripts": [
-            "hotel-revenue-optimizer=app.streamlit_app:main",
+            "hotel-revenue-optimizer=streamlit_app:main",
         ],
     },
     project_urls={

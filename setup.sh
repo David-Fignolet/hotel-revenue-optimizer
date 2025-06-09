@@ -1,24 +1,38 @@
 #!/bin/bash
+set -e  # Exit on error
 
-# Créer le dossier .streamlit s'il n'existe pas
+# Create .streamlit directory if it doesn't exist
 mkdir -p ~/.streamlit/
 
-# Créer le fichier de configuration
+# Create config.toml with production-ready settings
 cat > ~/.streamlit/config.toml << EOL
 [server]
 headless = true
 port = 8501
 enableCORS = false
+enableXsrfProtection = true
+enableWebsocketCompression = true
 
 [browser]
 serverAddress = ""
 serverPort = 8501
+gatherUsageStats = false
 
 [theme]
 base = "light"
-primaryColor = "#FF4B4B"
+primaryColor = "#1E88E5"
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F2F6"
+secondaryBackgroundColor = "#F5F5F5"
+textColor = "#262730"
+font = "sans serif"
+
+[runner]
+# Optimize memory usage
+magicEnabled = true
+
+[logger]
+level = "info"
+messageFormat = "%(asctime)s %(levelname) -10s %(name)s %(funcName)s %(lineno)d: %(message)s"
 textColor = "#262730"
 font = "sans serif"
 EOL

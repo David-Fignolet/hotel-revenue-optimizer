@@ -24,7 +24,7 @@ setup(
     description="Outil d'optimisation des revenus hôteliers utilisant l'IA pour la prédiction de la demande et la tarification dynamique",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    python_requires='>=3.10, <3.11',  # Compatible avec Python 3.10
+    python_requires='>=3.10',  # Compatible with Python 3.10+
     url="https://github.com/votre-username/hotel-revenue-optimizer",
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={

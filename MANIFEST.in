@@ -1,0 +1,34 @@
+# Fichiers de données
+include data/raw/*.csv
+data/processed/.gitkeep
+
+# Modèles sauvegardés
+include models/saved_models/.gitkeep
+
+# Ressources de l'application
+recursive-include app/assets *
+
+# Documentation
+include README.md
+include LICENSE
+include requirements.txt
+include requirements-dev.txt
+include pytest.ini
+
+# Fichiers de configuration
+include .env.example
+
+# Fichiers de test (pour les distributions source)
+prune tests/__pycache__
+prune */__pycache__
+
+# Exclure les fichiers temporaires et les dossiers
+global-exclude *.py[co]
+prune .pytest_cache
+prune .mypy_cache
+prune .vscode
+prune .idea
+prune __pycache__
+prune *.egg-info
+prune build
+prune dist

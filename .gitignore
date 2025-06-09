@@ -1,0 +1,114 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyo
+*.pyd
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Environnements virtuels
+env/
+venv/
+.venv/
+ENV/
+
+# Fichiers de dépendances
+pip-log.txt
+pip-delete-this-directory.txt
+Pipfile
+Pipfile.lock
+poetry.lock
+pyproject.toml
+
+# Données
+data/raw/*.csv
+!data/raw/sample_hotel_data.csv
+data/processed/
+data/interim/
+*.db
+*.sqlite
+*.sqlite3
+
+# Modèles
+models/saved_models/*
+!models/saved_models/.gitkeep
+*.pkl
+*.joblib
+*.h5
+*.hdf5
+*.tflite
+*.onnx
+
+# Logs et journaux
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# Système d'exploitation
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# Documentation
+docs/_build/
+docs/api/
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*~
+
+# Fichiers de configuration locaux
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Fichiers de cache
+.cache/
+.eggs/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Fichiers de couverture de test
+.coverage
+coverage.xml
+*.cover
+
+# Fichiers de déploiement
+.vercel
+.netlify
+*.pem
+*.key
+
+# Fichiers de débogage
+*.log
+*.sublime-workspace
+
+# Fichiers système
+.DS_Store
+Thumbs.db

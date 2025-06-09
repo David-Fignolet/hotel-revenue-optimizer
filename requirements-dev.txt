@@ -1,0 +1,32 @@
+# Dépendances de développement pour Hotel Revenue Optimizer
+
+# Test et qualité du code
+pytest>=7.0.0
+pytest-cov>=3.0.0
+pytest-mock>=3.10.0
+pytest-xdist>=2.5.0
+
+# Linting et formatage
+black>=22.0.0
+isort>=5.10.0
+flake8>=4.0.0
+mypy>=0.910
+
+# Documentation
+sphinx>=4.0.0
+sphinx-rtd-theme>=1.0.0
+sphinx-autodoc-typehints>=1.12.0
+
+# Notebooks pour l'exploration
+jupyter>=1.0.0
+jupyterlab>=3.0.0
+
+# Utilitaires de développement
+ipython>=8.0.0
+ipdb>=0.13.9
+
+# Génération de données de test
+Faker>=13.0.0
+
+# Pour exécuter les tests avec les dépendances de base
+-r requirements.txt

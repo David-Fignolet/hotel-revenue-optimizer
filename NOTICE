@@ -1,0 +1,48 @@
+# Initialiser le dépôt Git
+git init
+
+# Ajouter tous les fichiers
+git add .
+
+# Effectuer le premier commit
+git commit -m "Initial commit: Project setup with all documentation and source code"
+
+# Renommer la branche en main
+git branch -M mainHotel Revenue Optimizer
+Copyright 2023 David Michel-Larrieux
+
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
+
+---
+
+Ce projet utilise les bibliothèques open source suivantes :
+
+- Python (PSF License)
+- Pandas (BSD 3-Clause License)
+- NumPy (BSD 3-Clause License)
+- scikit-learn (BSD 3-Clause License)
+- Streamlit (Apache License 2.0)
+- Plotly (MIT License)
+- Matplotlib (Python Software Foundation License)
+- SciPy (BSD 3-Clause License)
+- Joblib (BSD 3-Clause License)
+- python-dotenv (BSD 3-Clause License)
+- pytest (MIT License)
+- pytest-cov (MIT License)
+- black (MIT License)
+- flake8 (MIT License)
+- isort (MIT License)
+- mypy (MIT License)
+- Sphinx (BSD 2-Clause "Simplified" License)
+
+Les licences complètes de ces bibliothèques sont disponibles dans le fichier LICENSE-3RD-PARTY.
+
+---
+
+Icônes et images :
+- Les icônes utilisées dans l'application proviennent de Feather Icons (MIT License)
+- Les images d'exemple sont sous licence Creative Commons Zero (CC0)
+
+---
+
+Ce produit inclut des données géographiques modifiées d'OpenStreetMap, © les contributeurs d'OpenStreetMap. Les données sont disponibles sous la licence Open Database License (ODbL).

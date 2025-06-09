@@ -1,0 +1,43 @@
+# Licences des bibliothèques tierces
+
+Ce fichier répertorie les licences des principales dépendances utilisées dans ce projet.
+Pour les licences complètes, veuillez vous référer aux liens fournis.
+
+## MIT License
+
+### Plotly
+Copyright (c) 2015-2023 Plotly, Inc.
+[Lien vers la licence complète](https://github.com/plotly/plotly.py/blob/master/LICENSE.txt)
+
+### Streamlit
+Copyright (c) 2019-2023 Streamlit Inc.
+[Lien vers la licence complète](https://github.com/streamlit/streamlit/blob/develop/LICENSE)
+
+## BSD 3-Clause License
+
+### scikit-learn
+Copyright (c) 2007-2023 The scikit-learn developers.
+[Lien vers la licence complète](https://github.com/scikit-learn/scikit-learn/blob/main/COPYING)
+
+### NumPy
+Copyright (c) 2005-2023, NumPy Developers.
+[Lien vers la licence complète](https://github.com/numpy/numpy/blob/main/LICENSE.txt)
+
+### Pandas
+Copyright (c) 2008-2023, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team
+[Lien vers la licence complète](https://github.com/pandas-dev/pandas/blob/master/LICENSE)
+
+### SciPy
+Copyright (c) 2001-2023 SciPy Developers.
+[Lien vers la licence complète](https://github.com/scipy/scipy/blob/main/LICENSE.txt)
+
+## Apache License 2.0
+
+### Apache License 2.0
+[Texte complet de la licence Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+## Python Software Foundation License
+
+### Python
+Copyright (c) 2001-2023 Python Software Foundation
+[Lien vers la licence complète](https://docs.python.org/3/license.html)

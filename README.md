@@ -35,7 +35,7 @@ Ce système combine **machine learning** et **expertise métier** pour automatis
 
 ## 🚀 Démo Live
 
-[**➡️ Tester l'application**](https://hotel-revenue-optimizer.streamlit.app) 
+[**➡️ Tester l'application**](https://share.streamlit.io/david-fignolet/hotel-revenue-optimizer) 
 *(Déployée sur Streamlit Cloud)*
 
 ## 🛠 Installation & Utilisation

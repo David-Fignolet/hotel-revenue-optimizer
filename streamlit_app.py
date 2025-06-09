@@ -123,19 +123,40 @@ def main():
     
     # Sidebar with filters
     with st.sidebar:
-        st.header("Paramètres")
+        # Date range filter
         st.subheader("Période d'analyse")
-        date_range = st.date_input(
-            "Sélectionnez la plage de dates",
-            value=(
-                datetime.now().date() - timedelta(days=90),
-                datetime.now().date()
-            ),
-            min_value=datetime(2023, 1, 1).date(),
-            max_value=datetime(2024, 12, 31).date(),
-            format="DD/MM/YYYY",
-            key="date_range_selector"
-        )
+        try:
+            # Create default date range
+            default_start = datetime.now().date() - timedelta(days=90)
+            default_end = datetime.now().date()
+            
+            # Set min and max dates
+            min_date = datetime(2023, 1, 1).date()
+            max_date = datetime(2024, 12, 31).date()
+            
+            # Ensure default values are within bounds
+            if default_start < min_date:
+                default_start = min_date
+            if default_end > max_date:
+                default_end = max_date
+                
+            date_range = st.date_input(
+                "Sélectionnez la plage de dates",
+                value=(default_start, default_end),
+                min_value=min_date,
+                max_value=max_date,
+                format="DD/MM/YYYY",
+                key="date_range_selector"
+            )
+            
+            # Ensure we have exactly 2 dates
+            if len(date_range) != 2:
+                st.warning("Veuillez sélectionner une plage de dates valide")
+                date_range = (default_start, default_end)
+                
+        except Exception as e:
+            st.error(f"Erreur lors de la sélection de la date: {str(e)}")
+            date_range = (default_start, default_end)
         
         st.subheader("Seuils d'alerte")
         occupancy_threshold = st.slider(

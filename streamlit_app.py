@@ -2,6 +2,13 @@
 Streamlit App for Hotel Revenue Optimization Dashboard
 """
 import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+from datetime import datetime, timedelta
+import tempfile
+import os
+import re
 
 # Configuration de la page - DOIT ÊTRE LA PREMIÈRE COMMANDE
 st.set_page_config(
@@ -10,33 +17,24 @@ st.set_page_config(
     layout="wide"
 )
 
-# Imports standards
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import plotly.graph_objects as go
-import plotly.express as px
-import tempfile
-import os
-import re
-
-# Import du tableau de bord
-try:
-    from src.dashboard import DashboardVisuals
-    DASHBOARD_AVAILABLE = True
-except ImportError:
-    DASHBOARD_AVAILABLE = False
-
-# Vérification de tabula
+# Vérification des dépendances
 try:
     from tabula import read_pdf
     TABULA_AVAILABLE = True
 except ImportError:
     TABULA_AVAILABLE = False
 
+# Vérification du tableau de bord
+try:
+    from src.dashboard import DashboardVisuals
+    DASHBOARD_AVAILABLE = True
+except ImportError as e:
+    DASHBOARD_AVAILABLE = False
+    print(f"DashboardVisuals non disponible : {str(e)}")
+
 def clean_numeric_series(series):
     """Nettoie une série numérique en remplaçant les virgules par des points"""
-    return series.astype(str).str.replace(',', '.').astype(float)
+    return pd.to_numeric(series.astype(str).str.replace(',', '.'), errors='coerce')
 
 def parse_hotel_pdf(pdf_file):
     """Traite un fichier PDF d'hôtel et retourne un DataFrame nettoyé"""
@@ -89,19 +87,19 @@ def parse_hotel_pdf(pdf_file):
                 continue
                 
             # Chercher une date au format JJ.MM.AA
-            date_match = re.search(r'(\d{2}\.\d{2}\.\d{2})', row_str)
+            date_match = re.search(r'(\d{2}\.\d{2}\.\d{2,4})', row_str)
             if not date_match:
                 continue
                 
             try:
                 date_str = date_match.group(1)
-                date = datetime.strptime(date_str, '%d.%m.%y').date()
+                date = pd.to_datetime(date_str, dayfirst=True).date()
                 
                 # Extraire les nombres décimaux
                 numbers = re.findall(r'(\d+[\.,]?\d*)', row_str)
                 numbers = [float(n.replace(',', '.')) for n in numbers if n.replace(',', '').replace('.', '').isdigit()]
                 
-                if len(numbers) >= 12:  # Vérifier qu'on a assez de nombres
+                if len(numbers) >= 12:
                     chambres_occupees = numbers[6]   # 7ème nombre
                     chambres_totales = numbers[7]    # 8ème nombre
                     taux_occupation = numbers[8]      # 9ème nombre
@@ -117,7 +115,7 @@ def parse_hotel_pdf(pdf_file):
                     processed_data['ca_total'].append(ca_total)
                     
             except Exception as e:
-                st.warning(f"Ligne ignorée: {row_str}")
+                print(f"Ligne ignorée: {row_str}")
                 continue
                 
         # Créer le DataFrame final
@@ -149,7 +147,12 @@ def load_uploaded_file(uploaded_file):
     """Charge un fichier CSV ou PDF téléchargé"""
     try:
         if uploaded_file.name.endswith('.csv'):
-            return pd.read_csv(uploaded_file)
+            df = pd.read_csv(uploaded_file)
+            # Convertir la colonne date en datetime si elle existe
+            if 'date' in df.columns:
+                df['date'] = pd.to_datetime(df['date'], dayfirst=True, errors='coerce')
+                df = df.dropna(subset=['date'])
+            return df
         elif uploaded_file.name.endswith('.pdf'):
             return parse_hotel_pdf(uploaded_file)
         else:
@@ -161,20 +164,36 @@ def load_uploaded_file(uploaded_file):
 
 def generate_predictions(historical, days=30):
     """Génère des prédictions basées sur les données historiques"""
-    # Implémentez votre logique de prédiction ici
-    # Ceci est un exemple simplifié
-    last_date = historical['date'].max()
-    future_dates = [last_date + timedelta(days=i) for i in range(1, days + 1)]
-    
-    predictions = pd.DataFrame({
-        'date': future_dates,
-        'price': historical['price'].mean() * np.random.normal(1, 0.1, days),
-        'occupancy_rate': np.clip(historical['occupancy_rate'].mean() * np.random.normal(1, 0.15, days), 0, 1)
-    })
-    
-    return predictions
+    try:
+        # S'assurer que la date est au bon format
+        if not pd.api.types.is_datetime64_any_dtype(historical['date']):
+            historical['date'] = pd.to_datetime(historical['date'])
+            
+        last_date = historical['date'].max()
+        
+        # Générer les dates futures
+        future_dates = pd.date_range(
+            start=last_date + pd.Timedelta(days=1),
+            periods=days
+        )
+        
+        # Générer des prédictions aléatoires basées sur la moyenne historique
+        avg_price = historical['price'].mean()
+        avg_occupancy = historical['occupancy_rate'].mean()
+        
+        predictions = pd.DataFrame({
+            'date': future_dates,
+            'price': np.random.normal(avg_price, avg_price * 0.1, days).clip(avg_price * 0.7, avg_price * 1.3),
+            'occupancy_rate': np.random.normal(avg_occupancy, 0.1, days).clip(0.1, 0.95)
+        })
+        
+        return predictions
+        
+    except Exception as e:
+        st.error(f"Erreur lors de la génération des prédictions : {str(e)}")
+        return None
 
-def display_metrics(historical, predictions=None):
+def display_metrics(historical):
     """Affiche les indicateurs clés"""
     if historical is None or historical.empty:
         return
@@ -216,10 +235,30 @@ def main():
         data = load_uploaded_file(uploaded_file)
     else:
         # Charger des données d'exemple
-        data = pd.read_csv("exemple_donnees_historiques.csv")
-        st.sidebar.info("Utilisation des données d'exemple. Téléchargez vos propres données pour commencer.")
+        try:
+            data = pd.read_csv("exemple_donnees_historiques.csv")
+            if 'date' in data.columns:
+                # Essayer différents formats de date
+                try:
+                    data['date'] = pd.to_datetime(data['date'], format='%Y-%m-%d')
+                except:
+                    try:
+                        data['date'] = pd.to_datetime(data['date'], format='%d/%m/%Y')
+                    except:
+                        try:
+                            data['date'] = pd.to_datetime(data['date'], format='%d-%m-%Y')
+                        except:
+                            # Si aucun format ne fonctionne, essayer de détecter automatiquement
+                            data['date'] = pd.to_datetime(data['date'], errors='coerce')
+                            # Supprimer les lignes où la date n'a pas pu être convertie
+                            data = data.dropna(subset=['date'])
+            
+            st.sidebar.info("Utilisation des données d'exemple. Téléchargez vos propres données pour commencer.")
+        except Exception as e:
+            st.error(f"Erreur lors du chargement des données d'exemple : {str(e)}")
+            return
     
-    if data is not None:
+    if data is not None and not data.empty:
         # Afficher les données brutes
         st.subheader("Aperçu des données")
         st.dataframe(data.head())
@@ -229,22 +268,77 @@ def main():
         display_metrics(data)
         
         # Générer des prédictions
-        if len(data) > 30:  # Seulement si on a assez de données
+        if len(data) > 7:  # Seulement si on a assez de données
             with st.spinner("Génération des prédictions..."):
                 predictions = generate_predictions(data)
                 
-                if predictions is not None:
+                if predictions is not None and not predictions.empty:
                     st.subheader("Prévisions des 30 prochains jours")
-                    st.line_chart(predictions.set_index('date'))
+                    # Créer un graphique avec deux axes y
+                    fig = go.Figure()
+                    
+                    # Ajouter les prédictions de prix
+                    fig.add_trace(go.Scatter(
+                        x=predictions['date'],
+                        y=predictions['price'],
+                        name='Prix moyen (€)',
+                        yaxis='y1',
+                        line=dict(color='blue')
+                    ))
+                    
+                    # Ajouter les prédictions de taux d'occupation
+                    fig.add_trace(go.Scatter(
+                        x=predictions['date'],
+                        y=predictions['occupancy_rate'] * 100,  # Convertir en pourcentage
+                        name="Taux d'occupation (%)",
+                        yaxis='y2',
+                        line=dict(color='red')
+                    ))
+                    
+                    # Mise en forme du graphique
+                    fig.update_layout(
+                        yaxis=dict(
+                            title='Prix moyen (€)',
+                            titlefont=dict(color='blue'),
+                            tickfont=dict(color='blue')
+                        ),
+                        yaxis2=dict(
+                            title="Taux d'occupation (%)",
+                            titlefont=dict(color='red'),
+                            tickfont=dict(color='red'),
+                            anchor='x',
+                            overlaying='y',
+                            side='right'
+                        ),
+                        hovermode='x unified'
+                    )
+                    
+                    st.plotly_chart(fig, use_container_width=True)
         
         # Section d'analyse avancée
         if DASHBOARD_AVAILABLE:
             st.subheader("Analyse avancée")
             try:
-                dashboard = DashboardVisuals(data)
-                st.plotly_chart(dashboard.create_occupancy_forecast_chart(data))
+                # Préparer les données pour le tableau de bord
+                if 'occupancy_rate' in data.columns:
+                    # Créer un DataFrame avec les colonnes attendues
+                    dashboard_data = data[['date', 'occupancy_rate']].copy()
+                    dashboard_data = dashboard_data.rename(columns={'occupancy_rate': 'predicted_occupancy'})
+                    
+                    # Ajouter des colonnes factices pour l'intervalle de confiance
+                    mean_occ = dashboard_data['predicted_occupancy'].mean()
+                    std_occ = dashboard_data['predicted_occupancy'].std()
+                    
+                    dashboard_data['lower_bound'] = dashboard_data['predicted_occupancy'] - std_occ * 0.5
+                    dashboard_data['upper_bound'] = dashboard_data['predicted_occupancy'] + std_occ * 0.5
+                    
+                    # Créer et afficher le graphique
+                    dashboard = DashboardVisuals()
+                    st.plotly_chart(dashboard.create_occupancy_forecast_chart(dashboard_data))
             except Exception as e:
                 st.error(f"Erreur lors du chargement du tableau de bord : {str(e)}")
+    else:
+        st.warning("Aucune donnée à afficher. Veuillez charger un fichier valide.")
 
 if __name__ == "__main__":
     main()

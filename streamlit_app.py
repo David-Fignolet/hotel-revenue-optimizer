@@ -10,8 +10,14 @@ import plotly.express as px
 from src.dashboard import DashboardVisuals
 import tempfile
 import os
-import tabula
 import re
+
+try:
+    from tabula import read_pdf
+    TABULA_AVAILABLE = True
+except ImportError:
+    st.error("Erreur: tabula-py n'est pas installé. Veuillez installer Java et réessayer.")
+    TABULA_AVAILABLE = False
 
 # Configuration de la page
 st.set_page_config(

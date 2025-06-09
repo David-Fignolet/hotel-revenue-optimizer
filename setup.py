@@ -2,6 +2,7 @@
 Configuration du package Hotel Revenue Optimizer
 """
 from setuptools import setup, find_packages
+import os
 
 # Lire le contenu du README
 with open("README.md", "r", encoding="utf-8") as fh:
@@ -9,7 +10,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 # Lire les dépendances depuis requirements.txt
 with open("requirements.txt", "r", encoding="utf-8") as f:
-    requirements = f.read().splitlines()
+    requirements = [
+        line.strip() 
+        for line in f.readlines() 
+        if line.strip() and not line.startswith('#')
+    ]
 
 setup(
     name="hotel-revenue-optimizer",
@@ -19,6 +24,8 @@ setup(
     description="Outil d'optimisation des revenus hôteliers utilisant l'IA pour la prédiction de la demande et la tarification dynamique",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    python_requires='>=3.8, <3.11',  # Compatible avec Python 3.8 à 3.10
+    install_requires=requirements,
     url="https://github.com/votre-username/hotel-revenue-optimizer",
     packages=find_packages(exclude=["tests", "tests.*"]),
     package_data={

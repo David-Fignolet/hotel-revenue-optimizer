@@ -1,10 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import sys
+from pathlib import Path
 
 # Ajouter le répertoire racine au PYTHONPATH
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(str(Path(__file__).parent.absolute()))
 
-from app.streamlit_app import main
+def main():
+    """Point d'entrée principal de l'application."""
+    from app.streamlit_app import run_app
+    run_app()
 
 if __name__ == "__main__":
     main()

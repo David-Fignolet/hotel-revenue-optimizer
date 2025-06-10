@@ -3,14 +3,19 @@ Application Streamlit pour l'optimisation des revenus hôteliers
 """
 import os
 import re
+import sys
 import tempfile
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from plotly.subplots import make_subplots
+
+# Ajouter le répertoire parent au PYTHONPATH
+sys.path.insert(0, str(Path(__file__).parent.parent.absolute()))
 
 # Configuration de la page - DOIT ÊTRE LA PREMIÈRE COMMANDE
 st.set_page_config(

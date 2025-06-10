@@ -6,7 +6,8 @@ import sys
 from pathlib import Path
 
 # Ajouter le répertoire racine au PYTHONPATH
-sys.path.append(str(Path(__file__).parent.absolute()))
+root_dir = Path(__file__).parent.absolute()
+sys.path.insert(0, str(root_dir))
 
 def main():
     """Point d'entrée principal de l'application."""
